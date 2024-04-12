@@ -52,6 +52,7 @@ ChatGPT 3.5
 MIT
 
 ## Live Website
+https://sashuttle.github.io/TaskBoard/
 
 ## Contact
 Phone: ###-###-####
