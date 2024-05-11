@@ -1,7 +1,8 @@
 // Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("tasks"));
-let nextId = JSON.parse(localStorage.getItem("nextId"));
+let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+let nextId = JSON.parse(localStorage.getItem("nextId")) || 1;
 
+//Task card 
 const taskTitle = document.querySelector ("#taskTitle");
 const dueDate = document.querySelector("#dueDate");
 const taskDescription = document.querySelector("#taskDescription");
@@ -13,11 +14,13 @@ const dueSoon = 'due-soon';
 //Save changes button from Add task form
 saveBtn.addEventListener(`click` , function(event){
     event.preventDefault();
-    console.log(taskTitle.value);
-    console.log(dueDate.value);
-    console.log(taskDescription.value);
-    createTaskCard(taskTitle, dueDate, taskDescription);
+    createTaskCard(taskTitle.value, dueDate.value, taskDescription.value);
 });
+
+//load saved tasks on page load
+window.onload = function () {
+    loadTasks();
+};
 
 //function for generating a task Id
 function generateTaskId() {
@@ -27,12 +30,13 @@ function generateTaskId() {
 //Task Card
 function createTaskCard(taskTitle, dueDate, taskDescription) {
     const nextId = generateTaskId();
-    const dueDateTime = new Date(dueDate.value);
+    const dueDateTime = new Date(dueDate);
     const currentDate = new Date();
     const timeDifference = dueDateTime - currentDate;
     const daysDifference = timeDifference / (1000 * 3600 * 24);
     let cardColorClass = '';
 
+    //determine what is past due (red) and what is due soon (today or future)
     if (daysDifference < -1) {
         cardColorClass = pastDue;
     } else if (daysDifference >= -1) {
@@ -41,17 +45,47 @@ function createTaskCard(taskTitle, dueDate, taskDescription) {
 
     const cardhtml = 
         `<div id="nextId-${nextId}" class="cardDraggable ${cardColorClass}" w-50">
-            <div class="cardHeader ${cardColorClass}">${taskTitle.value}</div>
+            <div class="cardHeader ${cardColorClass}">${taskTitle}</div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item ${cardColorClass}">${dueDate.value}</li>
-                    <li class="list-group-item ${cardColorClass}">${taskDescription.value}</li>
+                    <li class="list-group-item ${cardColorClass}">${dueDate}</li>
+                    <li class="list-group-item ${cardColorClass}">${taskDescription}</li>
                 </ul>
                 <a href="#" class="btn btn-primary deleteBtn" data-card-id="nextId-${nextId}">Delete</a>
             </div>
         </div>`;
-        $(`#to-do`).append(cardhtml);
-        makeCardsDraggable();
+    //append task card to DOM
+    $(`#to-do`).append(cardhtml);
+    makeCardsDraggable();
+
+     // Add task to taskList
+     const task = {
+        id: nextId,
+        title: taskTitle,
+        dueDate: dueDate,
+        description: taskDescription,
+        colorClass: cardColorClass
+    };
+    taskList.push(task);
+
+    // Save taskList and nextId to localStorage
+    saveTasks();
 };
+
+//saving tasks to local storage
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    localStorage.setItem("nextId", nextId);
+}
+
+//load tasks from local storage and create new tasks
+function loadTasks() {
+    const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+    
+    savedTasks.forEach(task => {
+        createTaskCard(task.title, task.dueDate, task.description, task.colorClass);
+    });
+}
+
 //Delete task (functionality to delete button)
 $(document).on('click', '.deleteBtn', function(event){
     event.preventDefault();
