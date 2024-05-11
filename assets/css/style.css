@@ -14,3 +14,12 @@ body {
 .task-card:hover {
   cursor: grab;
 }
+
+/* Colors for cards */
+.due-soon {
+  background-color: lightyellow;
+}
+
+.past-due {
+  background-color: lightcoral;
+}

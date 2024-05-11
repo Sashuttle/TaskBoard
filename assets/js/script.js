@@ -6,6 +6,10 @@ const taskTitle = document.querySelector ("#taskTitle");
 const dueDate = document.querySelector("#dueDate");
 const taskDescription = document.querySelector("#taskDescription");
 
+//setting up cards for color organization
+const pastDue = 'past-due';
+const dueSoon = 'due-soon';
+
 //Save changes button from Add task form
 saveBtn.addEventListener(`click` , function(event){
     event.preventDefault();
@@ -23,58 +27,64 @@ function generateTaskId() {
 //Task Card
 function createTaskCard(taskTitle, dueDate, taskDescription) {
     const nextId = generateTaskId();
+    const dueDateTime = new Date(dueDate.value);
+    const currentDate = new Date();
+    const timeDifference = dueDateTime - currentDate;
+    const daysDifference = timeDifference / (1000 * 3600 * 24);
+    let cardColorClass = '';
+
+    if (daysDifference < -1) {
+        cardColorClass = pastDue;
+    } else if (daysDifference >= -1) {
+        cardColorClass = dueSoon;
+    }
+
     const cardhtml = 
-        `<div id="nextId-${nextId}" class="card draggable" w-50">
-            <div class="cardHeader">${taskTitle.value}</div>
+        `<div id="nextId-${nextId}" class="cardDraggable ${cardColorClass}" w-50">
+            <div class="cardHeader ${cardColorClass}">${taskTitle.value}</div>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item">${dueDate.value}</li>
-                    <li class="list-group-item">${taskDescription.value}</li>
+                    <li class="list-group-item ${cardColorClass}">${dueDate.value}</li>
+                    <li class="list-group-item ${cardColorClass}">${taskDescription.value}</li>
                 </ul>
-                //TODO: make button on card a delete button
-                <a href="#" class="btn btn-primary" id="delBtn">Delete</a>
+                <a href="#" class="btn btn-primary deleteBtn" data-card-id="nextId-${nextId}">Delete</a>
             </div>
         </div>`;
         $(`#to-do`).append(cardhtml);
         makeCardsDraggable();
 };
+//Delete task (functionality to delete button)
+$(document).on('click', '.deleteBtn', function(event){
+    event.preventDefault();
+    const cardId = $(this).data('card-id'); 
+    const cardElement = $(`#${cardId}`);
 
-// Todo: create a function to render the task list and make cards draggable
+    if (cardElement.length) {
+        cardElement.remove();  
+    }
+});
+
+// Drag & Drop functions
+$(document).ready(function() {
+    makeCardsDraggable();
+    makeLanesDroppable();
+});
+
+//drag function for task card
 function makeCardsDraggable() {
-    $(".draggable").draggable({
+    $(".cardDraggable").draggable({
         containment: ".swim-lanes",
         cursor: "move",
-        revert: true 
+        revert: "invalid",
+        zIndex: 100
     });
 }
-
-// Todo: create a function to handle adding a new task
-function handleAddTask(event){
-
-}
-
-// Todo: create a function to handle deleting a task
-function handleDeleteTask(event){
-
-}
-
-// Todo: create a function to handle dropping a task into a new status lane
-//function handleDrop(event, ui) {}
+//Drop function to new lanes
 function makeLanesDroppable() {
     $(".lane").droppable({
-        accept: ".draggable",
+        accept: ".cardDraggable",
         drop: function(event, ui) {
-            ui.draggable.detach().appendTo($(this));
+            ui.draggable.detach().appendTo($(this)); 
+            ui.draggable.css({ top: 0, left: 0 }); 
         }
     });
 }
-
-// Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker
-//$(document).ready(function () {});
-$(document).ready(function() {
-    renderTaskList(); // Make sure this function actually renders tasks if any exist initially
-    makeLanesDroppable();
-    $('#saveBtn').on('click', function() {
-        createTaskCard(taskTitle, dueDate, taskDescription);
-        $('#formModal').modal('hide'); // This will hide the modal after submitting
-    });
-});
