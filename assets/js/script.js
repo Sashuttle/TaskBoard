@@ -79,6 +79,7 @@ function saveTasks() {
 
 //load tasks from local storage and create new tasks
 function loadTasks() {
+    taskList = [];
     const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
     
     savedTasks.forEach(task => {
@@ -87,14 +88,21 @@ function loadTasks() {
 }
 
 //Delete task (functionality to delete button)
-$(document).on('click', '.deleteBtn', function(event){
+$(document).on('click', '.deleteBtn', function(event) {
     event.preventDefault();
-    const cardId = $(this).data('card-id'); 
-    const cardElement = $(`#${cardId}`);
+    const cardId = $(this).data('card-id');
 
-    if (cardElement.length) {
-        cardElement.remove();  
-    }
+    // Remove the task from the taskList array
+    taskList = taskList.filter(task => task.id !== cardId);
+    console.log('Updated taskList after deletion:', taskList);
+
+    // Save the updated taskList to local storage
+    saveTasks();
+    console.log('Updated taskList saved to local storage.');
+
+    // Remove the card from the DOM
+    $(`#${cardId}`).remove();
+    console.log('Card removed from the DOM.');
 });
 
 // Drag & Drop functions
