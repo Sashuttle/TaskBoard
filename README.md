@@ -51,12 +51,11 @@ ChatGPT 3.5
 ## License
 MIT
 
-## Live Website
+## Live Website & Screenshots
 https://sashuttle.github.io/TaskBoard/
 
+![Taskboard1](./images/Taskboard1.png)
 
+![Taskboard2](./images/Taskboard2.png)
 ## Contact
-Phone: ###-###-####
-E-mail: email@email.com
-
-
+GitHub: https://github.com/Sashuttle
