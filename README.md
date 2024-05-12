@@ -48,6 +48,8 @@ ChatGPT 3.5
     Beth-Ann
     Lee Norrell
 
+    I would also like to thank JD, Senior Software Developer. I was having issues with the delete function in local storage.  He helped me test my code and more specifically had me write line 95 on my script.js file.  He explained to me exactly why he suggested that specific line of code and why it would help with the delete function.  He also gave me a brief explanation on other ways I could write my code that may be better and more efficient for the workforce. I appreciate his input and will try to implement his suggestions in my future code!
+
 ## License
 MIT
 
@@ -57,5 +59,6 @@ https://sashuttle.github.io/TaskBoard/
 ![Taskboard1](./images/Taskboard1.png)
 
 ![Taskboard2](./images/Taskboard2.png)
+
 ## Contact
 GitHub: https://github.com/Sashuttle
