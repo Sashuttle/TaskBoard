@@ -25,7 +25,7 @@ window.onload = function () {
 //function for generating a task Id
 function generateTaskId() {
     return nextId++;
-}
+};
 
 //Task Card
 function createTaskCard(taskTitle, dueDate, taskDescription) {
@@ -68,14 +68,15 @@ function createTaskCard(taskTitle, dueDate, taskDescription) {
     taskList.push(task);
 
     // Save taskList and nextId to localStorage
-    saveTasks();
+    saveTasks(taskList);
 };
 
 //saving tasks to local storage
-function saveTasks() {
-    localStorage.setItem("tasks", JSON.stringify(taskList));
+function saveTasks(tasks) {
+    localStorage.removeItem("tasks");
+    localStorage.setItem("tasks", JSON.stringify(tasks));
     localStorage.setItem("nextId", nextId);
-}
+};
 
 //load tasks from local storage and create new tasks
 function loadTasks() {
@@ -85,19 +86,19 @@ function loadTasks() {
     savedTasks.forEach(task => {
         createTaskCard(task.title, task.dueDate, task.description, task.colorClass);
     });
-}
+};
 
 //Delete task (functionality to delete button)
 $(document).on('click', '.deleteBtn', function(event) {
     event.preventDefault();
     const cardId = $(this).data('card-id');
-
+    const id = cardId.split("-").pop();
     // Remove the task from the taskList array
-    taskList = taskList.filter(task => task.id !== cardId);
+    taskList = taskList.filter(task => task.id !== parseInt(id));
     console.log('Updated taskList after deletion:', taskList);
 
     // Save the updated taskList to local storage
-    saveTasks();
+    saveTasks(taskList);
     console.log('Updated taskList saved to local storage.');
 
     // Remove the card from the DOM
@@ -119,7 +120,7 @@ function makeCardsDraggable() {
         revert: "invalid",
         zIndex: 100
     });
-}
+};
 //Drop function to new lanes
 function makeLanesDroppable() {
     $(".lane").droppable({
@@ -129,4 +130,4 @@ function makeLanesDroppable() {
             ui.draggable.css({ top: 0, left: 0 }); 
         }
     });
-}
+};
